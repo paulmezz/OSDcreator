@@ -3,25 +3,34 @@
 #Lets exit if there is an error
 set -e
 
-OSDSize=2384383
-
-#Journal drives x OSD per should = Number OSD
-JournalModel="MTFDHAX1T2MCF-1AN1ZABYY"
-JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $JournalModel | awk '{ printf $1" " ; }')"
-JournalSize=15897
-
-OSDModel="ST10000NM0206|ST10000NM0226"
-OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $OSDModel | awk '{ printf $1" " ; }'))
-OSDperJournal=18
-DataperOSDDevice=1
-NumberOfOSDs=36
-
 #TODO
 # Do some checks.  Did we find all the drives we expect?
 # Journals per drive * journal drives discovered = discovered OSD devices * OSD per OSDdevice?
 
 #TODO
-# Break this into functions so it can be called easier with internal journals
+# Break this into functions so it can be called easier with internal journals OR build  around it
+
+#TODO
+# Make the ceph-creatae-volumes.sh output a variable instead of hard coded.
+
+
+#Journal drives x OSD per should = Number OSD
+JournalModel="MTFDHAX1T2MCF-1AN1ZABYY"
+JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $JournalModel | awk '{ printf $1" " ; }')"
+
+OSDModel="ST10000NM0206|ST10000NM0226"
+OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $OSDModel | awk '{ printf $1" " ; }'))
+
+OSDperJournal=18
+DataperOSDDevice=1
+NumberOfOSDs=36
+
+#TODO These should be calculated instead of static
+OSDSize=2384383
+JournalSize=15897
+
+
+###  You shouldn't need to change stuff below this line  ###
 
 #Initialize a counter.  Don't touch this unless you _REALLY_ know what you are doing. 
 OSDDevicesPointer=0
