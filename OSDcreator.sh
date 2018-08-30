@@ -53,7 +53,7 @@ for JD in ${JournalDevices[@]}; do
 			#Make Journal LV
 			lvcreate -l ${JournalSize} -n journal.${OSDSerial}.${DataperOSDDeviceCount} ${JDSerial}
 			#dd if=/dev/zero bs=1M count=1 of=/dev/${JDSerial}/journal.${OSDSerial}.${DataperOSDDeviceCount}
-			ceph-volume lvm zap dev/${JDSerial}/journal.${OSDSerial}.${DataperOSDDeviceCount}
+			ceph-volume lvm zap /dev/${JDSerial}/journal.${OSDSerial}.${DataperOSDDeviceCount}
 
 			#Make OSD PV/VG/LV
 			pvcreate ${OSDDevices[$OSDDevicesPointer]}
