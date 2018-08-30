@@ -52,11 +52,13 @@ for JD in ${JournalDevices[@]}; do
 		for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 			#Make Journal LV
 			lvcreate -l ${JournalSize} -n journal.${OSDSerial}.${DataperOSDDeviceCount} ${JDSerial}
+			dd if=/dev/zero bs=1M count=1 of=/dev/${JDSerial}/journal.${OSDSerial}.${DataperOSDDeviceCount}
 
 			#Make OSD PV/VG/LV
 			pvcreate ${OSDDevices[$OSDDevicesPointer]}
 			vgcreate ${OSDSerial} ${OSDDevices[$OSDDevicesPointer]}
 			lvcreate -l ${OSDSize} -n data.${DataperOSDDeviceCount} ${OSDSerial}
+			dd if=/dev/zero bs=1M count=1 of=/dev/${OSDSerial}/data.${DataperOSDDeviceCount}
 
 			#Make the acual ceph volume
 			echo ceph-volume lvm create --data ${OSDSerial}/data.1 --block.db ${JDSerial}/journal.${OSDSerial}.${DataperOSDDeviceCount} >> ceph-create-volumes.sh
