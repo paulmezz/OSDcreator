@@ -11,7 +11,7 @@ set -e
 # Make the ceph-creatae-volumes.sh output a variable instead of hard coded.
 
 #Assumpition  
-# even distribution of journals to OSD data drives.  
+# even distribution of journals to OSD data drives. All drives of a specific type do a specific duty with no overlap 
 
 #Journal drives x OSD per should = Number OSD
 #JournalModel="MTFDHAX1T2MCF-1AN1ZABYY"
@@ -28,6 +28,7 @@ OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $OS
 OSDperJournal=18
 DataperOSDDevice=1
 NumberOfOSDs=36
+NumberOfJournals=1
 
 #TODO These should be calculated instead of static
 #OSDSize=2384383
@@ -66,7 +67,7 @@ if [ -n "$JournalModel" ] ; then
 		#One PV/VG per device
 		pvcreate ${Journal}
 		vgcreate ${JournalSerial} ${Journal}
-		JournalSize=$(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal})
+		JournalSize=$(expr $(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal}) * ${NumberOfJournals}))
 
 		#One or more LV per device
 		for JournalperJournalDeviceCount in $(seq 1 $OSDperJournal); do
