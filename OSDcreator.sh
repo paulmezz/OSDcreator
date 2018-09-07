@@ -7,6 +7,7 @@ set -e
 # Do some checks.  Did we find all the drives we expect?
 # Journals per drive * journal drives discovered = discovered OSD devices * OSD per OSDdevice?
 
+
 #TODO
 # Make the ceph-creatae-volumes.sh output a variable instead of hard coded.
 
@@ -26,14 +27,9 @@ OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $OS
 
 #If you are using internal journals, make the JournalModel above ""  
 OSDperJournal=18
-DataperOSDDevice=1
-NumberOfOSDs=36
+DataperOSDDevice=4
+NumberOfOSDs=8
 NumberOfJournals=1
-
-#TODO These should be calculated instead of static
-#OSDSize=2384383
-#JournalSize=15897
-
 
 ###  You shouldn't need to change stuff below this line  ###
 
