@@ -67,10 +67,10 @@ if [ -n "$JournalModel" ] ; then
 		#One PV/VG per device
 		pvcreate ${Journal}
 		vgcreate ${JournalSerial} ${Journal}
-		JournalSize=$(expr $(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal}) * ${NumberOfJournals})
+		JournalSize=$(expr $(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal}) \* ${NumberOfJournals})
 
 		#One or more LV per device
-		for JournalperJournalDeviceCount in $(seq 1 $OSDperJournal); do
+		for JournalperJournalDeviceCount in $(seq 1 $(expr ${OSDperJournal} / ${NumberOfJournals})); do
 			for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 				lvcreate -l ${JournalSize} -n journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount} ${JournalSerial}
 			done	
