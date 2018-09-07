@@ -82,7 +82,7 @@ for OSD in ${OSDSerialList[@]} ; do
 	for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 		echo -n "ceph-volume lvm create --data ${OSD}/data.${DataperOSDDeviceCount} " >> ceph-create-volumes.sh
 		if [ -n "$JournalModel" ] ; then 
-			echo --block.db $(lvdisplay -c | grep journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount} | cut -d : -f 1 | cut -d / -f 3-) >> ceph-create-volumes.sh
+			echo --block.db $(lvdisplay -c | grep journal.${OSD}.${DataperOSDDeviceCount} | cut -d : -f 1 | cut -d / -f 3-) >> ceph-create-volumes.sh
 		else
 			echo "" >> ceph-create-volumes.sh
 		fi
