@@ -18,12 +18,12 @@ set -e
 #JournalModel="MTFDHAX1T2MCF-1AN1ZABYY"
 JournalModel=""
 if [ -n "$JournalModel" ] ; then
-	JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $JournalModel | awk '{ printf $1" " ; }')"
+	JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${JournalModel}" | awk '{ printf $1" " ; }')"
 fi
 
 #OSDModel="ST10000NM0206|ST10000NM0226"
-OSDModel="PHKS817201ZC750BGN"
-OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P $OSDModel | awk '{ printf $1" " ; }'))
+OSDModel='INTEL SSDPED1K750GA'
+OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${OSDModel}" | awk '{ printf $1" " ; }'))
 
 #If you are using internal journals, make the JournalModel above ""  
 OSDperJournal=18
