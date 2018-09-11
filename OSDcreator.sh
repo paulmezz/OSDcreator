@@ -49,7 +49,7 @@ for OSD in ${OSDDevices[@]} ; do
 	for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 		lvcreate -l ${OSDSize} -n data.${DataperOSDDeviceCount} ${OSDSerial}
 		#If we are reprovisioning OSDs you want to clean them or else they will replay history from the epoch in the superblock
-		dd if=/dev/zero bs=1M count=1 of=/dev/${OSDSerial}/data.${DataperOSDDeviceCount}
+		dd if=/dev/zero bs=1M count=16 of=/dev/${OSDSerial}/data.${DataperOSDDeviceCount}
 	done
 done
 
@@ -69,6 +69,7 @@ if [ -n "$JournalModel" ] ; then
 		for JournalperJournalDeviceCount in $(seq 1 $(expr ${OSDperJournal} / ${NumberOfJournals})); do
 			for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 				lvcreate -l ${JournalSize} -n journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount} ${JournalSerial}
+				dd if=/dev/zero bs=1M count=16 of=/dev/${JournalSerial}/journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount}
 			done	
 			let OSDDevicesPointer=OSDDevicesPointer+1
 		done
