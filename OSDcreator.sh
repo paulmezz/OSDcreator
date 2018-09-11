@@ -81,7 +81,7 @@ for OSD in ${OSDSerialList[@]} ; do
 		if [ -n "$JournalModel" ] ; then 
 			echo --block.db $(lvdisplay -c | grep journal.${OSD}.${DataperOSDDeviceCount} | cut -d : -f 1 | cut -d / -f 3-) >> ceph-create-volumes.sh
 		else
-			echo "" >> ceph-create-volumes.sh
+			echo " " >> ceph-create-volumes.sh
 		fi
 	done
 done
