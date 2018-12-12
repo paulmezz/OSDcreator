@@ -9,7 +9,7 @@ set -e
 
 
 #TODO
-# Make the ceph-creatae-volumes.sh output a variable instead of hard coded.
+# Make the ceph-create-volumes.sh output a variable instead of hard coded.
 
 #Assumpition  
 # even distribution of journals to OSD data drives. All drives of a specific type do a specific duty with no overlap 
@@ -26,10 +26,10 @@ OSDModel='INTEL SSDPED1K750GA'
 OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${OSDModel}" | awk '{ printf $1" " ; }'))
 
 #If you are using internal journals, make the JournalModel above ""  
-OSDperJournal=18
-DataperOSDDevice=4
-NumberOfOSDs=8
-NumberOfJournals=1
+OSDperJournal=9
+DataperOSDDevice=1
+NumberOfOSDs=36
+NumberOfJournalDevices=4
 
 ###  You shouldn't need to change stuff below this line  ###
 
@@ -66,7 +66,7 @@ if [ -n "$JournalModel" ] ; then
 		JournalSize=$(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal})
 
 		#One or more LV per device
-		for JournalperJournalDeviceCount in $(seq 1 $(expr ${OSDperJournal} / ${NumberOfJournals})); do
+		for JournalperJournalDeviceCount in $(seq 1 $(expr ${OSDperJournal} / ${NumberOfJournalDevices})); do
 			for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 				lvcreate -l ${JournalSize} -n journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount} ${JournalSerial}
 				dd if=/dev/zero bs=1M count=16 of=/dev/${JournalSerial}/journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount}
