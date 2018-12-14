@@ -21,15 +21,15 @@ if [ -n "$JournalModel" ] ; then
 	JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${JournalModel}" | awk '{ printf $1" " ; }')"
 fi
 
+OSDModel="ST12000NM0027"
 #OSDModel="ST10000NM0206|ST10000NM0226"
-OSDModel='INTEL SSDPED1K750GA'
+#OSDModel='INTEL SSDPED1K750GA'
 OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${OSDModel}" | awk '{ printf $1" " ; }'))
 
 #If you are using internal journals, make the JournalModel above ""  
 OSDperJournal=9
 DataperOSDDevice=1
-NumberOfOSDs=36
-NumberOfJournalDevices=4
+NumberOfOSDs=12
 
 ###  You shouldn't need to change stuff below this line  ###
 
@@ -66,7 +66,7 @@ if [ -n "$JournalModel" ] ; then
 		JournalSize=$(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal})
 
 		#One or more LV per device
-		for JournalperJournalDeviceCount in $(seq 1 $(expr ${OSDperJournal} / ${NumberOfJournalDevices})); do
+		for JournalperJournalDeviceCount in $(seq 1 $(expr ${OSDperJournal} )); do
 			for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 				lvcreate -l ${JournalSize} -n journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount} ${JournalSerial}
 				dd if=/dev/zero bs=1M count=16 of=/dev/${JournalSerial}/journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount}
