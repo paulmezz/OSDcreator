@@ -119,6 +119,9 @@ if [ -n "$JournalModel" ] ; then
 	done
 fi
 
+#if we don't have a keyring for bootstrapping drives, grab it
+if [ ! -e /var/lib/ceph/bootstrap-osd/ceph.keyring ] ; then ceph auth get client.bootstrap-osd  > /var/lib/ceph/bootstrap-osd/ceph.keyring ; fi
+
 #Now we make the script to insert the OSDs into the cluster
 #For loop stepping through all the OSDs discovered
 for OSD in ${OSDSerialList[@]} ; do
