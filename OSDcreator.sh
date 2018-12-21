@@ -52,11 +52,17 @@ set -e
 #OSDModel="Micron_9200_MTFDHAL6T4TCU"
 #JournalModel=""
 #OSDperJournal=""
-#DataperOSDDevice=4
+#DataperOSDDevice=2
 #NumberOfOSDs=10
+#CustomDeviceClass="--crush-device-class nvme"
 
 
 ###  You shouldn't need to change stuff below this line  ###
+
+if [ -z "$OSDModel" ] ; then
+	echo "OSDModel not set, exiting"
+	exit 12
+fi
 
 ## Lets discover all the installed drives
 #If we have a journal model defined, search for them and put in an array
