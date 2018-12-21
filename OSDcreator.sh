@@ -134,7 +134,7 @@ for OSD in ${OSDSerialList[@]} ; do
 	#Loop to step through multiple Data partitions per OSD
 	for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 		#The most basic line to create an OSD.  We want an LVM to be created with data on an osd.  Don't newline it yet...
-		echo -n "ceph-volume lvm create --data ${OSD}/data.${DataperOSDDeviceCount} " >> ceph-create-volumes.sh
+		echo -n "ceph-volume lvm prepare --data ${OSD}/data.${DataperOSDDeviceCount} " >> ceph-create-volumes.sh
 		#Do we have journals?  
 		if [ -n "$JournalModel" ] ; then 
 			#We have journals!  Since everything is named after serial nubmers, just go find the LV with the correct name of OSDserial.sequence
@@ -146,4 +146,5 @@ for OSD in ${OSDSerialList[@]} ; do
 			echo "${CustomDeviceClass}"  >> ceph-create-volumes.sh
 		fi
 	done
+	echo "ceph-volume lvm activate --all" >> ceph-create-volumes.sh
 done
