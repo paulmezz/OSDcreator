@@ -146,5 +146,5 @@ for OSD in ${OSDSerialList[@]} ; do
 			echo "${CustomDeviceClass}"  >> ceph-create-volumes.sh
 		fi
 	done
-	echo "ceph-volume lvm activate --all" >> ceph-create-volumes.sh
 done
+echo "ceph-volume lvm activate --all" >> ceph-create-volumes.sh
