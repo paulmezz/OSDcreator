@@ -3,6 +3,11 @@
 #Lets exit if there is an error
 set -e
 
+#I got sick of pulling in new configs and updating this file for each tier of machine
+#Now just put the variables down below in local.config and have fun.  You can also 
+#just set them down below if you want
+if [ -e ./local.config ] ; then source ./local.config ; fi
+
 #####################
 #TODO 
 # * Do some checks.  Did we find all the drives we expect?
