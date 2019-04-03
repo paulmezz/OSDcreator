@@ -1,0 +1,48 @@
+
+## Dev ceph node
+export OSDModel="HUA7210S"
+export JournalModel="Samsung SSD 850"
+export OSDperJournal=5
+export DataperOSDDevice=1
+export NumberOfOSDs=10
+OSDSerialBlacklist=""
+JournalSerialBlacklist="S251NXAG829457D|S251NXAG829458R"
+
+
+##  Cold storage node
+#export OSDModel="ST12000NM0027"
+#export JournalModel=""
+#export OSDperJournal=""
+#export DataperOSDDevice=1
+#export NumberOfOSDs=12
+
+##  Bulk storage node - spinning rust - Original model
+#export OSDModel="ST10000NM0206|ST10000NM0226"
+#export JournalModel="MTFDHAX1T2MCF-1AN1ZABYY"
+#export OSDperJournal=18
+#export DataperOSDDevice=1
+#export NumberOfOSDs=36
+
+##  Bulk storage node - spinning rust - New model
+#export OSDModel="ST10000NM0206|ST10000NM0226"
+#export JournalModel="SAMSUNG MZ1LW960HMJP-00003"
+#export OSDperJournal=9
+#export DataperOSDDevice=1
+#export NumberOfOSDs=36
+
+##  Bulk storage node - nvme-meta
+#export OSDModel='INTEL SSDPED1K750GA'
+#export JournalModel=""
+#export OSDperJournal=""
+#export  DataperOSDDevice=4
+#export NumberOfOSDs=2
+#export CustomDeviceClass="--crush-device-class nvme-meta"
+
+##  Hot storage node 
+#export OSDModel="Micron_9200_MTFDHAL6T4TCU"
+#export JournalModel=""
+#export OSDperJournal=""
+#export DataperOSDDevice=2
+#export NumberOfOSDs=10
+#export CustomDeviceClass="--crush-device-class nvme"
+             
