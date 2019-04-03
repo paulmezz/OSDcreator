@@ -60,6 +60,7 @@ for OSD in ${OSDDevices[@]} ; do
 	OSDSerialList+=(${OSDSerial})
 
 	#Create PV, VG and calculate size of the LV/LVs
+        ceph-volume lvm zap ${OSD}
 	pvcreate ${OSD}
 	vgcreate ${OSDSerial} ${OSD}
 	OSDSize=$(expr $(pvdisplay ${OSD} -c | cut -d : -f 10) / ${DataperOSDDevice})
@@ -69,7 +70,8 @@ for OSD in ${OSDDevices[@]} ; do
 		lvcreate -l ${OSDSize} -n data.${DataperOSDDeviceCount} ${OSDSerial}
 		#If we are reprovisioning OSDs you want to clean them or else they will replay history from the epoch in the superblock
 		#Not too terrible if you have one or two joining.  A chunk of 36 joining at once will cause timeouts.
-		dd if=/dev/zero bs=1M count=16 of=/dev/${OSDSerial}/data.${DataperOSDDeviceCount}
+		ceph-volume lvm zap /dev/${OSDSerial}/data.${DataperOSDDeviceCount}
+		#dd if=/dev/zero bs=1M count=16 of=/dev/${OSDSerial}/data.${DataperOSDDeviceCount}
 	done
 done
 
@@ -85,6 +87,7 @@ if [ -n "$JournalModel" ] ; then
 		JournalSerialList+=(${JournalSerial})
 
 		#Create PV, VG and calculate size of the LV/LVs
+		ceph-volume lvm zap ${Journal}
 		pvcreate ${Journal}
 		vgcreate ${JournalSerial} ${Journal}
 		JournalSize=$(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal})
@@ -94,7 +97,8 @@ if [ -n "$JournalModel" ] ; then
 			for DataperOSDDeviceCount in $(seq 1 $DataperOSDDevice); do
 				lvcreate -l ${JournalSize} -n journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount} ${JournalSerial}
 				#Everyone wants a nice clean journal
-				dd if=/dev/zero bs=1M count=16 of=/dev/${JournalSerial}/journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount}
+				#dd if=/dev/zero bs=1M count=16 of=/dev/${JournalSerial}/journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount}
+				ceph-volume lvm zap /dev/${JournalSerial}/journal.${OSDSerialList[${OSDDevicesPointer}]}.${DataperOSDDeviceCount}
 			done
 			let OSDDevicesPointer=OSDDevicesPointer+1
 		done
