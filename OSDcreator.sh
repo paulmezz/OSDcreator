@@ -60,7 +60,7 @@ for OSD in ${OSDDevices[@]} ; do
 	OSDSerialList+=(${OSDSerial})
 
 	#Create PV, VG and calculate size of the LV/LVs
-        ceph-volume lvm zap ${OSD}
+        ceph-volume lvm zap --destroy ${OSD}
 	pvcreate ${OSD}
 	vgcreate ${OSDSerial} ${OSD}
 	OSDSize=$(expr $(pvdisplay ${OSD} -c | cut -d : -f 10) / ${DataperOSDDevice})
@@ -87,7 +87,7 @@ if [ -n "$JournalModel" ] ; then
 		JournalSerialList+=(${JournalSerial})
 
 		#Create PV, VG and calculate size of the LV/LVs
-		ceph-volume lvm zap ${Journal}
+		ceph-volume lvm zap --destroy ${Journal}
 		pvcreate ${Journal}
 		vgcreate ${JournalSerial} ${Journal}
 		JournalSize=$(expr $(pvdisplay ${Journal} -c | cut -d : -f 10) / ${OSDperJournal})
