@@ -4,9 +4,8 @@
 set -e
 
 #I got sick of pulling in new configs and updating this file for each tier of machine
-#Now just put the variables down below in local.config and have fun.  You can also 
-#just set them down below if you want
-if [ -e ./local.config ] ; then source ./local.config ; fi
+#Now just put the variables down below in local.config and have fun.   
+if [ -e ./local.config ] ; then source ./local.config ; else echo "No local config, exiting" ; exit 37 ; fi
 
 #####################
 #TODO 
@@ -24,44 +23,6 @@ if [ -e ./local.config ] ; then source ./local.config ; fi
 #Journal drives x OSD per should = Number OSD
 #####################
 
-##  Cold storage node
-#OSDModel="ST12000NM0027"
-#JournalModel=""
-#OSDperJournal=""
-#DataperOSDDevice=1
-#NumberOfOSDs=12
-
-##  Bulk storage node - spinning rust - Original model
-#OSDModel="ST10000NM0206|ST10000NM0226"
-#JournalModel="MTFDHAX1T2MCF-1AN1ZABYY"
-#OSDperJournal=18
-#DataperOSDDevice=1
-#NumberOfOSDs=36
-
-##  Bulk storage node - spinning rust - New model
-#OSDModel="ST10000NM0206|ST10000NM0226"
-#JournalModel="SAMSUNG MZ1LW960HMJP-00003"
-#OSDperJournal=9
-#DataperOSDDevice=1
-#NumberOfOSDs=36
-
-##  Bulk storage node - nvme-meta
-#OSDModel='INTEL SSDPED1K750GA'
-#JournalModel=""
-#OSDperJournal=""
-#DataperOSDDevice=4
-#NumberOfOSDs=2
-#CustomDeviceClass="--crush-device-class nvme-meta"
-
-##  Hot storage node 
-#OSDModel="Micron_9200_MTFDHAL6T4TCU"
-#JournalModel=""
-#OSDperJournal=""
-#DataperOSDDevice=2
-#NumberOfOSDs=10
-#CustomDeviceClass="--crush-device-class nvme"
-
-
 ###  You shouldn't need to change stuff below this line  ###
 
 if [ -z "$OSDModel" ] ; then
@@ -69,14 +30,24 @@ if [ -z "$OSDModel" ] ; then
 	exit 12
 fi
 
+#If there aren't blacklisted drives, make up some serial that is blacklisted so everyone
+#passes the check.
+if [ -z "$OSDSerialBlacklist" ] ; then
+        OSDSerialBlacklist="BIGNULLSTRINGTHATSHOULDNEVERBEASERIALNUMBER"
+fi
+
+if [ -z "$JournalSerialBlacklist" ] ; then
+        JournalSerialBlacklist="BIGNULLSTRINGTHATSHOULDNEVERBEASERIALNUMBER"
+fi
+
 ## Lets discover all the installed drives
 #If we have a journal model defined, search for them and put in an array
 if [ -n "$JournalModel" ] ; then
-	JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${JournalModel}" | awk '{ printf $1" " ; }')"
+	JournalDevices="$(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${JournalModel}" | grep -Pv "$JournalSerialBlacklist" | awk '{ printf $1" " ; }')"
 fi
 
 #Find all OSD Devices and put in an array
-OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${OSDModel}" | awk '{ printf $1" " ; }'))
+OSDDevices=($(lsblk --nodeps --noheadings -p  -o name,serial,model | grep -P "${OSDModel}" | grep -Pv "$OSDSerialBlacklist" | awk '{ printf $1" " ; }'))
 
 #If we have an old create volume script, just move it aside
 if [ -e ceph-create-volumes.sh ] ; then mv ceph-create-volumes.sh ceph-create-volumes.sh.$(date +%s).backup ; fi
