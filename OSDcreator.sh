@@ -5,7 +5,13 @@ set -e
 
 #I got sick of pulling in new configs and updating this file for each tier of machine
 #Now just put the variables down below in local.config and have fun.   
-if [ -e ./local.config ] ; then source ./local.config ; else echo "No local config, exiting" ; exit 37 ; fi
+if [ -e ./local.config ] ; then 
+	source ./local.config 
+else 
+	echo "No local config, Here are the drives I've found:" 
+	lsblk --nodeps  -p  -o name,size,serial,model
+	exit 37
+fi
 
 #####################
 #TODO 
